@@ -41,7 +41,7 @@ extern u8 gb_frameskip;
 extern u8 cgb_enable;
 
 // bios
-#define DMG_BIOS_ENABLE    // optional logo: requires dmg.c
+//#define DMG_BIOS_ENABLE    // optional logo: requires dmg.c
 #ifdef DMG_BIOS_ENABLE
 	extern u8  DMG_BIOS[0x100];
 	extern u8  opt_use_gb_bios;

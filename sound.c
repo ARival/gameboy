@@ -24,7 +24,9 @@ u32 sample_count = 0;
 
 // Debug
 
+#ifdef SAVE_AUDIO_DATA_RAW
 FILE* raw = NULL;
+#endif
 
 // APU registers, state, and RAM
 

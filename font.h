@@ -1,7 +1,7 @@
 #ifndef _FONT_H
 #define _FONT_H
 
-#include "SDL.h"
+#include <SDL2/SDL.h>
 
 void FontStartup();
 void FontPrint(SDL_Renderer* renderer, const char* text, int x, int y);

@@ -1,18 +1,13 @@
 # GameBoy Emulator Makefile
 
-BIN = out/gameboy
-INCLUDES = -I /usr/include/SDL
+BIN = gameboy
+SOURCES = gameboy.c platform.c sound.c screen.c inspector.c font.c
 
-SOURCES = gameboy.c platform.c sound.c screen.c
+CFLAGS = -Wall -Og -g $(shell sdl2-config --cflags)
+LDLIBS = -lm $(shell sdl2-config --libs)
 
-MAKE_OPTIONS = -Wall -ansi -O3
-
-LIBS =  -lm -lSDL
-
-OPTIONS = $(LIBS) `sdl-config --cflags --libs`
-
-all:
-	g++ $(MAKE_OPTIONS) $(SOURCES) $(INCLUDES) -o $(BIN) $(OPTIONS)
+all: $(BIN)
+gameboy: $(SOURCES)
 
 clean:
-	rm -rf $(BIN)
+	$(RM) $(BIN)

@@ -1,9 +1,7 @@
 #ifndef _SOUND_H
 #define _SOUND_H
 
-#include "SDL_audio.h"
-
-#define SAVE_AUDIO_DATA_RAW
+//#define SAVE_AUDIO_DATA_RAW
 
 #define SQUARE_WAVE
 //#define TRIANGLE_WAVE
@@ -15,6 +13,7 @@
 
 // Platform sound debug
 #if defined(SAVE_AUDIO_DATA_RAW) || defined(SAVE_AUDIO_DATA_SDL)
+#include <stdio.h>
 extern FILE* raw;
 #endif
 

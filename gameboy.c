@@ -2374,7 +2374,7 @@ void PowerUp()
     // GB
     gb_halt = 0;
     gb_ime = 1;
-    gb_bios_enable = !cgb_enable;
+    gb_bios_enable = 0;
     lcd_mode = 0;
 
     // MBC
