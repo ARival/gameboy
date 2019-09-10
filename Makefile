@@ -11,3 +11,7 @@ gameboy: $(SOURCES)
 
 clean:
 	$(RM) $(BIN)
+
+help:
+	@echo Use \"-D OPTION\" to enable each of the following features.
+	@echo \	DMG_BIOS_ENABLE
