@@ -1,13 +1,9 @@
 #include "gameboy.h"
 #include "font.h"
 
-const char* bitmap_font_chars = 
-	" !\"#$%&'()"	"*+,-./0123"
-	"456789:;<="	">?@ABCDEFG"
-	"HIJKLMNOPQ"	"RSTUVWXYZ["
-	"\\]^_`abcde"	"fghijklmno"
-	"pqrstuvwxy"	"z{|}~";
-
+/**
+ * 6 x 6 bitmap font for characters ' ' to '~'.
+ */
 const uint64_t bitmap_font_pixels[64] = 
 {
 	0x1081044de28a100,	0x20408a2c57ca100,	0x20400410e280100,	0x20400a6947c0000,
@@ -32,45 +28,45 @@ SDL_Texture* font_texture = NULL;
 SDL_Surface* font_surface = NULL;
 
 void FontStartup(SDL_Renderer* renderer)
-	{
+{
 	u32 x, y;
 	u32* itr;
 
 	font_texture = SDL_CreateTexture(
-		renderer, 
-		SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, 
-		FONT_BITMAP_WIDTH, FONT_BITMAP_HEIGHT);
+			renderer, 
+			SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, 
+			FONT_BITMAP_WIDTH, FONT_BITMAP_HEIGHT);
 
 	font_surface = SDL_CreateRGBSurface(0, FONT_BITMAP_WIDTH, FONT_BITMAP_HEIGHT, 32, 0xFF000000, 0x00FF0000, 0x0000FF00, 0x000000FF);
 
-    SDL_LockSurface(font_surface);
+	SDL_LockSurface(font_surface);
 
-    itr = (u32*)font_surface->pixels;
-    for (y = 0; y < FONT_BITMAP_WIDTH; y++)
-        {
-        for (x = 0; x < FONT_BITMAP_HEIGHT; x++)
-        	{
-        	u32 color;
-		u8 bit;
-        	bit = (bitmap_font_pixels[y] >> x) & 0x01;
-        	color = (bit ? TEXT_FOREGROUND : TEXT_BACKGROUND);
-            *(itr + x) = color;
-        	}
-        itr += font_surface->pitch/4;
-        }
-
-    SDL_UnlockSurface(font_surface);
-
-    SDL_UpdateTexture(font_texture, NULL, font_surface->pixels, font_surface->pitch);
-
-    SDL_SetTextureBlendMode(font_texture, SDL_BLENDMODE_BLEND);
+	itr = (u32*)font_surface->pixels;
+	for (y = 0; y < FONT_BITMAP_WIDTH; y++)
+	{
+		for (x = 0; x < FONT_BITMAP_HEIGHT; x++)
+		{
+			u32 color;
+			u8 bit;
+			bit = (bitmap_font_pixels[y] >> x) & 0x01;
+			color = (bit ? TEXT_FOREGROUND : TEXT_BACKGROUND);
+			*(itr + x) = color;
+		}
+		itr += font_surface->pitch/4;
 	}
+
+	SDL_UnlockSurface(font_surface);
+
+	SDL_UpdateTexture(font_texture, NULL, font_surface->pixels, font_surface->pitch);
+
+	SDL_SetTextureBlendMode(font_texture, SDL_BLENDMODE_BLEND);
+}
 
 
 void FontPrint(SDL_Renderer* renderer, const char* text, int x, int y)
-	{
-    SDL_Rect font_rect, screen_rect;
-	
+{
+	SDL_Rect font_rect, screen_rect;
+
 	font_rect.w = FONT_CHAR_WIDTH; 
 	font_rect.h = FONT_CHAR_HEIGHT;
 
@@ -80,7 +76,7 @@ void FontPrint(SDL_Renderer* renderer, const char* text, int x, int y)
 	screen_rect.y = y;
 
 	for (; *text; text++)
-		{
+	{
 		u8 pos = *text - ' ';
 
 		font_rect.x = (pos % FONT_COLUMNS) * FONT_CHAR_WIDTH;
@@ -89,5 +85,5 @@ void FontPrint(SDL_Renderer* renderer, const char* text, int x, int y)
 		SDL_RenderCopy(renderer, font_texture, &font_rect, &screen_rect);
 
 		screen_rect.x += screen_rect.w;
-		}
 	}
+}
