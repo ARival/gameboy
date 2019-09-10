@@ -1,4 +1,3 @@
-
 #include "gameboy.h"
 #include "font.h"
 
@@ -10,7 +9,7 @@ const char* bitmap_font_chars =
 	"pqrstuvwxy"	"z{|}~";
 
 const uint64_t bitmap_font_pixels[64] = 
-	{
+{
 	0x1081044de28a100,	0x20408a2c57ca100,	0x20400410e280100,	0x20400a6947c0000,
 	0x10801464f280100,	0x0,				0x18c10e400000015, 	0x21219920000010e,
 	0x10811510038039f, 	0x20411308000410e,	0x19e38e044002015,	0x0,
@@ -27,7 +26,7 @@ const uint64_t bitmap_font_pixels[64] =
 	0x8a284308302202,	0x0,				0x1fc07c0084200,	0x1fc044a10410c,
 	0x1fc0445300188,	0x1fc0440104104,	0x1fff7c008420c,	0x1fff000000000,
 	0x0,				0x0,				0x0,				0x0
-	};
+};
 
 SDL_Texture* font_texture = NULL;
 SDL_Surface* font_surface = NULL;
@@ -51,7 +50,8 @@ void FontStartup(SDL_Renderer* renderer)
         {
         for (x = 0; x < FONT_BITMAP_HEIGHT; x++)
         	{
-        	u32 color, bit;
+        	u32 color;
+		u8 bit;
         	bit = (bitmap_font_pixels[y] >> x) & 0x01;
         	color = (bit ? TEXT_FOREGROUND : TEXT_BACKGROUND);
             *(itr + x) = color;
@@ -81,17 +81,7 @@ void FontPrint(SDL_Renderer* renderer, const char* text, int x, int y)
 
 	for (; *text; text++)
 		{
-		u32 pos;
-		const char* seek = bitmap_font_chars;
-		char lookup = *text;
-		for (; *seek; seek++)
-			{
-			if (*seek == lookup) break;
-			}
-
-		if (!seek) continue;
-
-		pos = seek - bitmap_font_chars;
+		u8 pos = *text - ' ';
 
 		font_rect.x = (pos % FONT_COLUMNS) * FONT_CHAR_WIDTH;
 		font_rect.y = (pos / FONT_COLUMNS) * FONT_CHAR_HEIGHT;
@@ -101,6 +91,3 @@ void FontPrint(SDL_Renderer* renderer, const char* text, int x, int y)
 		screen_rect.x += screen_rect.w;
 		}
 	}
-
-
-
