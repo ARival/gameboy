@@ -24,40 +24,39 @@ const uint64_t bitmap_font_pixels[64] =
 	0x0,				0x0,				0x0,				0x0
 };
 
-SDL_Texture* font_texture = NULL;
-SDL_Surface* font_surface = NULL;
+static SDL_Texture* font_texture = NULL;
+static SDL_Surface* font_surface = NULL;
 
 void FontStartup(SDL_Renderer* renderer)
 {
 	u32 x, y;
 	u32* itr;
 
-	font_texture = SDL_CreateTexture(
-			renderer, 
-			SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, 
-			FONT_BITMAP_WIDTH, FONT_BITMAP_HEIGHT);
-
-	font_surface = SDL_CreateRGBSurface(0, FONT_BITMAP_WIDTH, FONT_BITMAP_HEIGHT, 32, 0xFF000000, 0x00FF0000, 0x0000FF00, 0x000000FF);
-
+	font_surface = SDL_CreateRGBSurface(0,
+			FONT_BITMAP_WIDTH, FONT_BITMAP_HEIGHT,
+			32, 0xFF000000, 0x00FF0000, 0x0000FF00, 0x000000FF);
 	SDL_LockSurface(font_surface);
 
-	itr = (u32*)font_surface->pixels;
+	itr = font_surface->pixels;
+
 	for (y = 0; y < FONT_BITMAP_WIDTH; y++)
 	{
 		for (x = 0; x < FONT_BITMAP_HEIGHT; x++)
 		{
-			u32 color;
-			u8 bit;
-			bit = (bitmap_font_pixels[y] >> x) & 0x01;
-			color = (bit ? TEXT_FOREGROUND : TEXT_BACKGROUND);
-			*(itr + x) = color;
+			u8 bit = (bitmap_font_pixels[y] >> x) & 0x01;
+			u32 color = (bit ? TEXT_FOREGROUND : TEXT_BACKGROUND);
+			*(itr++) = color;
 		}
-		itr += font_surface->pitch/4;
 	}
 
 	SDL_UnlockSurface(font_surface);
 
-	SDL_UpdateTexture(font_texture, NULL, font_surface->pixels, font_surface->pitch);
+	font_texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888,
+			SDL_TEXTUREACCESS_STREAMING,
+			FONT_BITMAP_WIDTH, FONT_BITMAP_HEIGHT);
+
+	SDL_UpdateTexture(font_texture, NULL,
+			font_surface->pixels, font_surface->pitch);
 
 	SDL_SetTextureBlendMode(font_texture, SDL_BLENDMODE_BLEND);
 }
