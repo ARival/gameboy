@@ -12,6 +12,8 @@ void FontPrint(SDL_Renderer* renderer, const char* text, int x, int y);
 #define FONT_CHAR_HEIGHT	6
 #define FONT_COLUMNS		10
 #define FONT_RENDER_SCALE	2
+
+/* Colors in ARGB8888 format. */
 #define TEXT_FOREGROUND		0xFFFFFFFF
 #define TEXT_BACKGROUND 	0x00000000
 

@@ -32,9 +32,9 @@ void FontStartup(SDL_Renderer* renderer)
 	u32 x, y;
 	u32* itr;
 
-	font_surface = SDL_CreateRGBSurface(0,
+	font_surface = SDL_CreateRGBSurfaceWithFormat(0,
 			FONT_BITMAP_WIDTH, FONT_BITMAP_HEIGHT,
-			32, 0xFF000000, 0x00FF0000, 0x0000FF00, 0x000000FF);
+			32, SDL_PIXELFORMAT_ARGB8888);
 	SDL_LockSurface(font_surface);
 
 	itr = font_surface->pixels;
