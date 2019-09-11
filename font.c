@@ -1,5 +1,7 @@
-#include "gameboy.h"
 #include "font.h"
+
+/* C99 is required for "unsigned long long" (hence uint64_t) support. */
+#include <stdint.h>
 
 /**
  * 6 x 6 bitmap font for characters ' ' to '~'.
@@ -25,16 +27,18 @@ const uint64_t bitmap_font_pixels[64] =
 };
 
 static SDL_Texture* font_texture = NULL;
-static SDL_Surface* font_surface = NULL;
 
+/* TODO: Change to font_init() */
 void FontStartup(SDL_Renderer* renderer)
 {
-	u32 x, y;
-	u32* itr;
+	uint_fast8_t x, y;
+	uint32_t *itr;
+	SDL_Surface* font_surface;
 
 	font_surface = SDL_CreateRGBSurfaceWithFormat(0,
 			FONT_BITMAP_WIDTH, FONT_BITMAP_HEIGHT,
 			32, SDL_PIXELFORMAT_ARGB8888);
+
 	SDL_LockSurface(font_surface);
 
 	itr = font_surface->pixels;
@@ -43,28 +47,25 @@ void FontStartup(SDL_Renderer* renderer)
 	{
 		for (x = 0; x < FONT_BITMAP_HEIGHT; x++)
 		{
-			u8 bit = (bitmap_font_pixels[y] >> x) & 0x01;
-			u32 color = (bit ? TEXT_FOREGROUND : TEXT_BACKGROUND);
+			uint_fast8_t bit = (bitmap_font_pixels[y] >> x) & 0x01;
+			uint32_t color =
+				(bit ? TEXT_FOREGROUND : TEXT_BACKGROUND);
 			*(itr++) = color;
 		}
 	}
 
 	SDL_UnlockSurface(font_surface);
-
-	font_texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888,
-			SDL_TEXTUREACCESS_STREAMING,
-			FONT_BITMAP_WIDTH, FONT_BITMAP_HEIGHT);
-
-	SDL_UpdateTexture(font_texture, NULL,
-			font_surface->pixels, font_surface->pitch);
-
-	SDL_SetTextureBlendMode(font_texture, SDL_BLENDMODE_BLEND);
+	font_texture = SDL_CreateTextureFromSurface(renderer, font_surface);
+	SDL_FreeSurface(font_surface);
+	/* TODO: Add error checking. */
 }
 
 
-void FontPrint(SDL_Renderer* renderer, const char* text, int x, int y)
+void FontPrint(SDL_Renderer* renderer, const char *restrict text, int x, int y)
 {
 	SDL_Rect font_rect, screen_rect;
+
+	/* TODO: Add assert for font_texture. */
 
 	font_rect.w = FONT_CHAR_WIDTH; 
 	font_rect.h = FONT_CHAR_HEIGHT;
