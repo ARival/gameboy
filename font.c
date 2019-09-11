@@ -77,7 +77,7 @@ void FontPrint(SDL_Renderer* renderer, const char *restrict text, int x, int y)
 
 	for (; *text; text++)
 	{
-		u8 pos = *text - ' ';
+		uint_fast8_t pos = *text - ' ';
 
 		font_rect.x = (pos % FONT_COLUMNS) * FONT_CHAR_WIDTH;
 		font_rect.y = (pos / FONT_COLUMNS) * FONT_CHAR_HEIGHT;
