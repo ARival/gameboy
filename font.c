@@ -28,7 +28,6 @@ static SDL_Texture* font_texture = NULL;
 /* TODO: Change to font_init() */
 void FontStartup(SDL_Renderer* renderer)
 {
-	uint_fast8_t x, y;
 	uint32_t *itr;
 	SDL_Surface* font_surface;
 
@@ -41,9 +40,9 @@ void FontStartup(SDL_Renderer* renderer)
 	itr = font_surface->pixels;
 
 	/* Converting bitmap font to font sheet. */
-	for (y = 0; y < FONT_BITMAP_WIDTH; y++)
+	for (uint_fast8_t y = 0; y < FONT_BITMAP_WIDTH; y++)
 	{
-		for (x = 0; x < FONT_BITMAP_HEIGHT; x++)
+		for (uint_fast8_t x = 0; x < FONT_BITMAP_HEIGHT; x++)
 		{
 			uint_fast8_t bit = (bitmap_font_pixels[y] >> x) & 0x01;
 			uint32_t color =
@@ -63,6 +62,7 @@ void FontPrint(SDL_Renderer* renderer, const char *restrict text, int x, int y)
 {
 	SDL_Rect font_rect, screen_rect;
 
+	
 	/* TODO: Add assert for font_texture. */
 
 	font_rect.w = FONT_CHAR_WIDTH; 
