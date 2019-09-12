@@ -2,12 +2,13 @@
 #define _FONT_H
 
 #include <SDL2/SDL.h>
+#include <stdint.h>
 
-void FontStartup();
-void FontPrint(SDL_Renderer* renderer, const char* text, int x, int y);
+void FontStartup(SDL_Renderer* renderer);
+void FontPrint(SDL_Renderer* renderer, const char *restrict text, int x, int y);
 
-#define FONT_BITMAP_WIDTH	64
-#define FONT_BITMAP_HEIGHT 	64
+#define FONT_BITMAP_WIDTH	60
+#define FONT_BITMAP_HEIGHT 	60
 #define FONT_CHAR_WIDTH		6
 #define FONT_CHAR_HEIGHT	6
 #define FONT_COLUMNS		10
