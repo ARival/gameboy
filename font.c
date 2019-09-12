@@ -25,8 +25,13 @@ const uint64_t bitmap_font_pixels[60] =
 
 static SDL_Texture* font_texture = NULL;
 
-/* TODO: Change to font_init() */
-void FontStartup(SDL_Renderer* renderer)
+/**
+ * Initialises the font sheet. Must be called once before calling FontPrint().
+ *
+ * \return 0 on success, negative on error (call SDL_GetError() for more
+ *		information).
+ */
+int FontStartup(SDL_Renderer* renderer)
 {
 	uint32_t *itr;
 	SDL_Surface* font_surface;
@@ -35,7 +40,8 @@ void FontStartup(SDL_Renderer* renderer)
 			FONT_BITMAP_WIDTH, FONT_BITMAP_HEIGHT,
 			32, SDL_PIXELFORMAT_ARGB8888);
 
-	SDL_LockSurface(font_surface);
+	if(SDL_LockSurface(font_surface) < 0)
+		goto err;
 
 	itr = font_surface->pixels;
 
@@ -54,16 +60,23 @@ void FontStartup(SDL_Renderer* renderer)
 	SDL_UnlockSurface(font_surface);
 	font_texture = SDL_CreateTextureFromSurface(renderer, font_surface);
 	SDL_FreeSurface(font_surface);
-	/* TODO: Add error checking. */
+
+	if(font_texture == NULL)
+		goto err;
+
+	return 0;
+
+err:
+	return -1;
 }
 
 
+/* FontStartup must be called first. */
 void FontPrint(SDL_Renderer* renderer, const char *restrict text, int x, int y)
 {
 	SDL_Rect font_rect, screen_rect;
 
-	
-	/* TODO: Add assert for font_texture. */
+	SDL_assert(font_texture != NULL);
 
 	font_rect.w = FONT_CHAR_WIDTH; 
 	font_rect.h = FONT_CHAR_HEIGHT;

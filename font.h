@@ -4,7 +4,7 @@
 #include <SDL2/SDL.h>
 #include <stdint.h>
 
-void FontStartup(SDL_Renderer* renderer);
+int FontStartup(SDL_Renderer* renderer);
 void FontPrint(SDL_Renderer* renderer, const char *restrict text, int x, int y);
 
 #define FONT_BITMAP_WIDTH	60
