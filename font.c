@@ -1,3 +1,8 @@
+/**
+ * This file is released under the UNLICENSE license, the terms of which are
+ * provided within the LICENSE file.
+ */
+
 #include <SDL2/SDL.h>
 /* C99 is required for "unsigned long long" (hence uint64_t) support. */
 #include <stdint.h>

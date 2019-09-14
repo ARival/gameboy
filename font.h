@@ -1,3 +1,8 @@
+/**
+ * This file is released under the UNLICENSE license, the terms of which are
+ * provided within the LICENSE file.
+ */
+
 #ifndef _FONT_H
 #define _FONT_H
 
