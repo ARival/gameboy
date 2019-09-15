@@ -7,16 +7,15 @@
 #define _FONT_H
 
 #include <SDL2/SDL.h>
-#include <stdint.h>
 
 int FontStartup(SDL_Renderer* renderer);
 void FontPrint(SDL_Renderer* renderer, const char *restrict text, int x, int y);
 
-#define FONT_BITMAP_WIDTH	60
-#define FONT_BITMAP_HEIGHT 	60
+#define FONT_BITMAP_WIDTH	48
+#define FONT_BITMAP_HEIGHT 	72
 #define FONT_CHAR_WIDTH		6
 #define FONT_CHAR_HEIGHT	6
-#define FONT_COLUMNS		10
+#define FONT_COLUMNS		8
 #define FONT_RENDER_SCALE	2
 
 /* Colors in ARGB8888 format. */
