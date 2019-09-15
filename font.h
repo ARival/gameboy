@@ -8,8 +8,11 @@
 
 #include <SDL2/SDL.h>
 
-int FontStartup(SDL_Renderer* renderer);
-void FontPrint(SDL_Renderer* renderer, const char *restrict text, int x, int y);
+typedef struct font_ctx_s font_ctx;
+
+font_ctx *FontStartup(SDL_Renderer *renderer);
+void FontPrint(font_ctx *ctx, const char *restrict text, int x, int y);
+void FontExit(font_ctx *ctx);
 
 #define FONT_BITMAP_WIDTH	48
 #define FONT_BITMAP_HEIGHT 	72

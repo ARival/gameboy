@@ -35,7 +35,13 @@ const uint64_t bitmap_font_pixels[72] = {
 	0x000a600310508, 0x0000208208208, 0x0000108418114, 0x0000000000000
 };
 
-static SDL_Texture* font_texture = NULL;
+/**
+ * Context required to store the generated texture with the given renderer.
+ */
+struct font_ctx_s {
+	SDL_Texture *tex;
+	SDL_Renderer *rend;
+};
 
 /**
  * Initialises the font sheet. Must be called once before calling FontPrint().
@@ -43,10 +49,12 @@ static SDL_Texture* font_texture = NULL;
  * \return 0 on success, negative on error (call SDL_GetError() for more
  *		information).
  */
-int FontStartup(SDL_Renderer* renderer)
+font_ctx *FontStartup(SDL_Renderer *renderer)
 {
 	uint32_t *itr;
-	SDL_Surface* font_surface;
+	SDL_Surface *font_surface;
+	SDL_Texture *font_texture;
+	font_ctx *ctx;
 
 	font_surface = SDL_CreateRGBSurfaceWithFormat(0,
 			FONT_BITMAP_WIDTH, FONT_BITMAP_HEIGHT,
@@ -76,19 +84,27 @@ int FontStartup(SDL_Renderer* renderer)
 	if(font_texture == NULL)
 		goto err;
 
-	return 0;
+	if((ctx = malloc(sizeof(*ctx))) == NULL)
+		goto err;
+
+	ctx->tex = font_texture;
+	ctx->rend = renderer;
+
+	return ctx;
 
 err:
-	return -1;
+	return NULL;
 }
 
 
 /* FontStartup must be called first. */
-void FontPrint(SDL_Renderer* renderer, const char *restrict text, int x, int y)
+void FontPrint(font_ctx *ctx, const char *restrict text, int x, int y)
 {
 	SDL_Rect font_rect, screen_rect;
 
-	SDL_assert(font_texture != NULL);
+	SDL_assert(ctx != NULL);
+	SDL_assert(ctx->tex != NULL);
+	SDL_assert(ctx->rend != NULL);
 
 	font_rect.w = FONT_CHAR_WIDTH; 
 	font_rect.h = FONT_CHAR_HEIGHT;
@@ -105,8 +121,19 @@ void FontPrint(SDL_Renderer* renderer, const char *restrict text, int x, int y)
 		font_rect.x = (pos % FONT_COLUMNS) * FONT_CHAR_WIDTH;
 		font_rect.y = (pos / FONT_COLUMNS) * FONT_CHAR_HEIGHT;
 
-		SDL_RenderCopy(renderer, font_texture, &font_rect, &screen_rect);
+		SDL_RenderCopy(ctx->rend, ctx->tex, &font_rect, &screen_rect);
 
 		screen_rect.x += screen_rect.w;
 	}
+}
+
+/**
+ * Destroys texture and frees memory used by font context.
+ * Does not destroy renderer.
+ */
+void FontExit(font_ctx *ctx)
+{
+	SDL_DestroyTexture(ctx->tex);
+	free(ctx);
+	ctx = NULL;
 }

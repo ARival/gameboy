@@ -5,11 +5,12 @@
 #include "font.h"
 
 char text_temp[512];
+static font_ctx *fctx;
 
 #define PRINTN(N, STR, REG, X, Y)	\
 	do { 	\
 		sprintf(text_temp, STR ": %0" #N "X", (REG)); \
-		FontPrint(renderer, text_temp, (X), (Y)); } \
+		FontPrint(fctx, text_temp, (X), (Y)); } \
 	while (0)
 
 #define PRINTR8(REG, X, Y)		PRINTN(8, #REG, REG, X, Y)
@@ -17,14 +18,14 @@ char text_temp[512];
 #define PRINTR(REG, X, Y)		PRINTN(2, #REG, REG, X, Y)
 #define PRINT4(STR, REG, X, Y)	PRINTN(4, STR, REG, X, Y)
 #define PRINTI(STR, REG, X, Y)	PRINTN(2, STR, REG, X, Y)
-#define PRINTS(STR, X, Y)		do { FontPrint(renderer, STR, X, Y); } while (0)
+#define PRINTS(STR, X, Y)		do { FontPrint(fctx, STR, X, Y); } while (0)
 
 SDL_Surface* inspector_surface = NULL;
 
 void InspectorStartup(SDL_Renderer* renderer)
 	{
 	//inspector_surface = SDL_CreateRGBSurface(0, WINDOW_WIDTH, WINDOW_HEIGHT, 32, 0xFF000000, 0x00FF0000, 0x0000FF00, 0x000000FF);
-	FontStartup(renderer);
+	fctx = FontStartup(renderer);
 	}
 
 
@@ -45,8 +46,8 @@ void InspectorDraw(SDL_Renderer* renderer)
 	SDL_RenderFillRect(renderer, NULL);
 
 
-	FontPrint(renderer, cgb_enable ? "CGB" : "DMG", 10, 10);
-	FontPrint(renderer, cgb_double ? "DOUBLE" : "SINGLE", 70, 10);
+	FontPrint(fctx, cgb_enable ? "CGB" : "DMG", 10, 10);
+	FontPrint(fctx, cgb_double ? "DOUBLE" : "SINGLE", 70, 10);
 
 	PRINTR(gb_halt, 250, 10);
 	PRINTR(gb_ime, 430, 10);
@@ -82,7 +83,7 @@ void InspectorDraw(SDL_Renderer* renderer)
 		u32 inst_addr = start + index;
 		u8 inst_value = READ(inst_addr);
 		sprintf(text_temp, "%s%04X %02X", (inst_addr == PC) ? "> " : "  ", inst_addr, inst_value);
-		FontPrint(renderer, text_temp, inst_x, inst_y + (index + 1) * 20);
+		FontPrint(fctx, text_temp, inst_x, inst_y + (index + 1) * 20);
 		}
 
 	// stack memory
@@ -96,6 +97,6 @@ void InspectorDraw(SDL_Renderer* renderer)
 		u32 stack_addr = start + index;
 		u8 stack_value = READ(stack_addr);
 		sprintf(text_temp, "%s%04X %02X", (stack_addr == SP) ? "> " : "  ", stack_addr, stack_value);
-		FontPrint(renderer, text_temp, stack_x, stack_y + (index + 1) * 20);
+		FontPrint(fctx, text_temp, stack_x, stack_y + (index + 1) * 20);
 		}
 	}
