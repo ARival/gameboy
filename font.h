@@ -10,8 +10,28 @@
 
 typedef struct font_ctx_s font_ctx;
 
+/**
+ * Initialises font context with given renderer. Must be called first.
+ * \return 0 on success, negative on error (call SDL_GetError() for more
+ *		information).
+ */
 font_ctx *FontStartup(SDL_Renderer *renderer);
-void FontPrint(font_ctx *ctx, const char *restrict text, int x, int y);
+
+/**
+ * Prints a string to the SDL2 renderer.
+ *
+ * \param ctx	Font library context.
+ * \param text	Text to print.
+ * \param x	X co-ordinate to start printing text.
+ * \param y	Y co-ordinate to start printing text.
+ * \param width_scale	Width scale of font. Must be larger than 0.
+ * \param height_scale	Height scale of font. Must be larger than 0.
+ */
+void FontPrint(font_ctx *ctx, const char *restrict text, int x, int y,
+		uint_fast8_t width_scale, uint_fast8_t height_scale)
+/**
+ * Deletes font context.
+ */
 void FontExit(font_ctx *ctx);
 
 #define FONT_BITMAP_WIDTH	48
@@ -19,7 +39,6 @@ void FontExit(font_ctx *ctx);
 #define FONT_CHAR_WIDTH		6
 #define FONT_CHAR_HEIGHT	6
 #define FONT_COLUMNS		8
-#define FONT_RENDER_SCALE	2
 
 /* Colors in ARGB8888 format. */
 #define TEXT_FOREGROUND		0xFFFFFFFF
@@ -36,27 +55,27 @@ void FontExit(font_ctx *ctx);
 
 int main(void)
 {
-        SDL_Window *win;
+	SDL_Window *win;
 	SDL_Renderer *rend;
 	SDL_Surface *surf;
-        const char hi[] = "Hello World!";
-        font_ctx *ctx;
+	const char hi[] = "Hello World!";
+	font_ctx *ctx;
 
 	SDL_Init(SDL_INIT_VIDEO);
 	SDL_CreateWindowAndRenderer(320, 240, 0, &win, &rend);
 	ctx = FontStartup(rend);
-        FontPrint(ctx, hi, 0, 0);
-        FontPrint(ctx, hi, 50, 90);
+	FontPrint(ctx, hi, 0, 0);
+	FontPrint(ctx, hi, 50, 90);
 	SDL_RenderPresent(rend);
 	SDL_Delay(1000);
 
-        FontExit(ctx);
+	FontExit(ctx);
 	SDL_DestroyRenderer(rend);
 	SDL_DestroyWindow(win);
 
 	SDL_Quit();
 
-        return 0;
+	return 0;
 }
 #endif
 

@@ -43,12 +43,6 @@ struct font_ctx_s {
 	SDL_Renderer *rend;
 };
 
-/**
- * Initialises the font sheet. Must be called once before calling FontPrint().
- *
- * \return 0 on success, negative on error (call SDL_GetError() for more
- *		information).
- */
 font_ctx *FontStartup(SDL_Renderer *renderer)
 {
 	uint32_t *itr;
@@ -97,20 +91,22 @@ err:
 }
 
 
-/* FontStartup must be called first. */
-void FontPrint(font_ctx *ctx, const char *restrict text, int x, int y)
+void FontPrint(font_ctx *ctx, const char *restrict text, int x, int y,
+		uint_fast8_t width_scale, uint_fast8_t height_scale)
 {
 	SDL_Rect font_rect, screen_rect;
 
 	SDL_assert(ctx != NULL);
 	SDL_assert(ctx->tex != NULL);
 	SDL_assert(ctx->rend != NULL);
+	SDL_assert(width_scale > 0);
+	SDL_assert(height_scale > 0);
 
 	font_rect.w = FONT_CHAR_WIDTH; 
 	font_rect.h = FONT_CHAR_HEIGHT;
 
-	screen_rect.w = FONT_CHAR_WIDTH * FONT_RENDER_SCALE;
-	screen_rect.h = FONT_CHAR_HEIGHT * FONT_RENDER_SCALE;
+	screen_rect.w = FONT_CHAR_WIDTH * width_scale;
+	screen_rect.h = FONT_CHAR_HEIGHT * height_scale;
 	screen_rect.x = x;
 	screen_rect.y = y;
 
@@ -127,10 +123,6 @@ void FontPrint(font_ctx *ctx, const char *restrict text, int x, int y)
 	}
 }
 
-/**
- * Destroys texture and frees memory used by font context.
- * Does not destroy renderer.
- */
 void FontExit(font_ctx *ctx)
 {
 	SDL_DestroyTexture(ctx->tex);
