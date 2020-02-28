@@ -42,20 +42,12 @@ const uint64_t bitmap_font_pixels[72] = {
 	0x000a600310508, 0x0000208208208, 0x0000108418114, 0x0000000000000
 };
 
-/**
- * Context required to store the generated texture with the given renderer.
- */
-struct font_ctx_s {
-	SDL_Texture *tex;
-	SDL_Renderer *rend;
-};
-
-font_ctx *FontStartup(SDL_Renderer *renderer, uint32_t fg_col, uint32_t bg_col)
+int FontStartup(font_ctx *restrict ctx, SDL_Renderer *renderer,
+		uint32_t fg_col, uint32_t bg_col)
 {
 	uint32_t *itr;
 	SDL_Surface *font_surface;
 	SDL_Texture *font_texture;
-	font_ctx *ctx;
 
 	font_surface = SDL_CreateRGBSurfaceWithFormat(0,
 			FONT_BITMAP_WIDTH, FONT_BITMAP_HEIGHT,
@@ -72,8 +64,8 @@ font_ctx *FontStartup(SDL_Renderer *renderer, uint32_t fg_col, uint32_t bg_col)
 		for (uint_fast8_t x = 0; x < FONT_BITMAP_WIDTH; x++)
 		{
 			uint_fast8_t bit = (bitmap_font_pixels[y] >> x) & 0x01;
-			uint32_t color = (bit ? fg_col : bg_col);
-			*(itr++) = color;
+			uint32_t colour = (bit ? fg_col : bg_col);
+			*(itr++) = colour;
 		}
 	}
 
@@ -84,19 +76,13 @@ font_ctx *FontStartup(SDL_Renderer *renderer, uint32_t fg_col, uint32_t bg_col)
 	if(font_texture == NULL)
 		goto err;
 
-	if((ctx = malloc(sizeof(*ctx))) == NULL)
-	{
-		SDL_DestroyTexture(ctx->tex);
-		goto err;
-	}
-
 	ctx->tex = font_texture;
 	ctx->rend = renderer;
 
-	return ctx;
+	return 0;
 
 err:
-	return NULL;
+	return 1;
 }
 
 
@@ -135,6 +121,4 @@ void FontPrint(font_ctx *ctx, const char *restrict text, int x, int y,
 void FontExit(font_ctx *ctx)
 {
 	SDL_DestroyTexture(ctx->tex);
-	free(ctx);
-	ctx = NULL;
 }
