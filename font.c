@@ -4,10 +4,17 @@
  */
 
 #include <SDL2/SDL.h>
+
 /* C99 is required for "unsigned long long" (hence uint64_t) support. */
 #include <stdint.h>
 
 #include "font.h"
+
+#define FONT_BITMAP_WIDTH	48
+#define FONT_BITMAP_HEIGHT 	72
+#define FONT_CHAR_WIDTH		6
+#define FONT_CHAR_HEIGHT	6
+#define FONT_COLUMNS		8
 
 /**
  * 6 x 6 bitmap font for characters ' ' to '~', where each 64-bit value is a
@@ -43,7 +50,7 @@ struct font_ctx_s {
 	SDL_Renderer *rend;
 };
 
-font_ctx *FontStartup(SDL_Renderer *renderer)
+font_ctx *FontStartup(SDL_Renderer *renderer, uint32_t fg_col, uint32_t bg_col)
 {
 	uint32_t *itr;
 	SDL_Surface *font_surface;
@@ -65,8 +72,7 @@ font_ctx *FontStartup(SDL_Renderer *renderer)
 		for (uint_fast8_t x = 0; x < FONT_BITMAP_WIDTH; x++)
 		{
 			uint_fast8_t bit = (bitmap_font_pixels[y] >> x) & 0x01;
-			uint32_t color =
-				(bit ? TEXT_FOREGROUND : TEXT_BACKGROUND);
+			uint32_t color = (bit ? fg_col : bg_col);
 			*(itr++) = color;
 		}
 	}
@@ -79,7 +85,10 @@ font_ctx *FontStartup(SDL_Renderer *renderer)
 		goto err;
 
 	if((ctx = malloc(sizeof(*ctx))) == NULL)
+	{
+		SDL_DestroyTexture(ctx->tex);
 		goto err;
+	}
 
 	ctx->tex = font_texture;
 	ctx->rend = renderer;
